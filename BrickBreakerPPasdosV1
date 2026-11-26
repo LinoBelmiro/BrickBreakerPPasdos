@@ -1,1 +1,52 @@
-Test
+#include <ncurses.h> // Lino 1-52
+
+const int WIDTH = 50;      // Lebar arena permainan (50 kolom)
+const int HEIGHT = 22;     // Tinggi arena permainan (22 baris)
+const int BRICK_ROWS = 4;  // Jumlah baris balok ke bawah
+const int BRICK_COLS = 8;  // Jumlah kolom balok ke samping
+
+int score = 0;             // Penyimpan nilai skor (masih 0)
+int lives = 5;             // Penyimpan sisa nyawa pemain (awal 5)
+bool isRunning = true;     // true = game jalan, false = berhenti
+
+int paddleX = WIDTH / 2 - 4; // Posisi horizontal pemukul (di tengah layar)
+const int paddleY = HEIGHT - 2; // Posisi vertikal pemukul (baris ke-20, dekat bawah)
+const int paddleWidth = 8;   // Panjang papan pemukul (8 karakter)
+
+int ballX = WIDTH / 2;     // Posisi horizontal bola (di tengah)
+int ballY = paddleY - 1;   // Posisi vertikal bola (1 baris di atas pemukul)
+int bricks[BRICK_ROWS][BRICK_COLS]; // Tabel data 4x8 untuk menyimpan status balok
+
+void initNcurses() {
+    initscr();              // Mengubah terminal biasa menjadi layar kanvas game
+    noecho();               // Menyembunyikan huruf tombol yang diketik pemain
+    curs_set(0);            // Menghilangkan kursor kedip-kedip agar tidak mengganggu
+    keypad(stdscr, TRUE);   // Mengaktifkan tombol panah kiri & kanan keyboard
+    nodelay(stdscr, TRUE);  // Game tetap jalan tanpa menunggu pemain menekan tombol
+}
+
+void drawArenaAndUI() {
+    for (int x = 0; x <= WIDTH; x++) {
+        mvaddch(0, x, '#');       // Gambar pagar atas dengan simbol #
+        mvaddch(HEIGHT, x, '#');  // Gambar pagar bawah dengan simbol #
+    }
+    for (int y = 0; y <= HEIGHT; y++) {
+        mvaddch(y, 0, '#');       // Gambar pagar kiri dengan simbol #
+        mvaddch(y, WIDTH, '#');   // Gambar pagar kanan dengan simbol #
+    }
+    for (int i = 0; i < paddleWidth; i++) {
+        mvaddch(paddleY, paddleX + i, '='); // Gambar pemukul sepanjang 8 simbol '='
+    }
+    mvprintw(HEIGHT + 1, 1, "SKOR: %d | NYAWA: %d | [A/D] Gerak | [Q] Keluar", score, lives);
+    mvprintw(HEIGHT + 2, 1, "STATUS: Progress 1 (Prototipe Tampilan & Paddle)");
+}
+
+void updatePaddle(int ch) {
+    if ((ch == KEY_LEFT || ch == 'a' || ch == 'A') && paddleX > 1) {
+        paddleX -= 2; // Geser pemukul ke kiri 2 langkah jika belum mentok pagar kiri
+        if (paddleX < 1) paddleX = 1;
+    } else if ((ch == KEY_RIGHT || ch == 'd' || ch == 'D') && paddleX + paddleWidth < WIDTH) {
+        paddleX += 2; // Geser pemukul ke kanan 2 langkah jika belum mentok pagar kanan
+        if (paddleX + paddleWidth > WIDTH) paddleX = WIDTH - paddleWidth;
+    }
+}
