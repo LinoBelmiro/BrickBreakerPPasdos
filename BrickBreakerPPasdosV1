@@ -61,3 +61,50 @@ void updateBall() {
 // 3. Tambahkan logika pantulan jika mengenai paddle
 // 4. Kurangi lives jika bola jatuh melewati batas bawah arena
 }
+void initBricks() {
+    for (int r = 0; r < BRICK_ROWS; r++) {
+        for (int c = 0; c < BRICK_COLS; c++) {
+            bricks[r][c] = 1; // Isi semua 32 kotak dengan angka 1 (artinya balok masih utuh)
+        }
+    }
+}
+
+void drawBricks() {
+    for (int r = 0; r < BRICK_ROWS; r++) {
+        for (int c = 0; c < BRICK_COLS; c++) {
+            if (bricks[r][c] == 1) { // Jika balok bernilai 1, gambar '[===]' di layar
+                mvprintw(2 + r, 3 + (c * 6), "[===]");
+            }
+        }
+    }
+}
+
+void checkBrickCollision() {
+    // TODO (Anggota 3): Ubah nilai balok dari 1 menjadi 0 jika tertabrak bola & tambah skor
+}
+
+int main() {
+    initNcurses(); // 1. Siapkan layar
+    initBricks();  // 2. Susun data balok
+
+    while (isRunning) { // 3. Ulangi terus selama game berjalan:
+        int ch = getch();
+        if (ch != ERR) {
+            flushinp();
+            if (ch == 'q' || ch == 'Q') isRunning = false; // Tekan Q untuk keluar
+            updatePaddle(ch); // Gerakkan pemukul sesuai tombol
+        }
+        updateBall();          // Panggil logika bola (belum aktif)
+        checkBrickCollision(); // Panggil logika tabrakan (belum aktif)
+
+        erase();           // Bersihkan gambar lama secara halus
+        drawArenaAndUI();  // Gambar ulang arena & pemukul
+        drawBricks();      // Gambar ulang balok
+        drawBall();        // Gambar ulang bola
+        refresh();         // Tampilkan hasil gambar baru ke layar
+        napms(25);         // Jeda 25 milidetik (kecepatan ~40 gambar per detik)
+    }
+
+    endwin(); // Kembalikan layar terminal ke mode normal saat selesai
+    return 0;
+}
