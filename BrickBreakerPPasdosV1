@@ -50,3 +50,14 @@ void updatePaddle(int ch) {
         if (paddleX + paddleWidth > WIDTH) paddleX = WIDTH - paddleWidth;
     }
 }
+
+void drawBall() {
+mvaddch(ballY, ballX, 'O'); // Menggambar huruf 'O' sebagai bola di layar
+}
+void updateBall() {
+// TODO (Anggota 2):
+// 1. Buat bola bergerak otomatis menggunakan ballDirX dan ballDirY
+// 2. Tambahkan logika pantulan jika mengenai dinding kiri, kanan, dan atas
+// 3. Tambahkan logika pantulan jika mengenai paddle
+// 4. Kurangi lives jika bola jatuh melewati batas bawah arena
+}
